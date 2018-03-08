@@ -12,24 +12,33 @@ def decay_particle(parent_p4, child_masses, max_weight=0):
     py = parent_p4[2]
     pz = parent_p4[3]
 
-    parent_mass = np.sqrt(e*e - (px*px + py*py + pz*pz))
+    #parent_mass = np.sqrt(e*e - (px*px + py*py + pz*pz))
 
-    parent_TLV = ROOT.TLorentzVector( px, py, pz, parent_mass )
+    parent_TLV = ROOT.TLorentzVector( px, py, pz, e )
 
     weight = -1e9
     children = None
+
     if event.SetDecay(parent_TLV, len(child_masses), child_masses, ""):
 
-        weight = event.Generate()
+        wmax = event.GetWtMax()
+        #print("wtmax: ",wmax)
 
-        if max_weight*np.random.random() < weight:
+        weight = -1 # Do this while loop to avoid negative weights
 
-            children = []
-            for n in range(len(child_masses)):
+        while weight<0:
 
-                child = event.GetDecay(n)
+            weight = event.Generate()
+            #print("HERE: ",weight)
 
-                children.append([child.E(), child.X(), child.Y(), child.Z()])
+            if max_weight*np.random.random() < weight:
+
+                children = []
+                for n in range(len(child_masses)):
+
+                    child = event.GetDecay(n)
+
+                    children.append([child.E(), child.X(), child.Y(), child.Z()])
 
     return weight, children
 ################################################################################
