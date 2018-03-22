@@ -81,6 +81,7 @@ for mginfo,event in zip(meta,lhfile.events):
             #print(energy,px,py,pz)
             #print(mlt.invmass(energy,px,py,pz))
             child_masses = np.array([4.7,80.419002])
+            #child_masses = np.array([4.7,2.419002])
 
             #w = -1
             #while w<0:
