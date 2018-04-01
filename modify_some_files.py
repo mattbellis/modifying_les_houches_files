@@ -48,7 +48,8 @@ for mginfo,event in zip(meta,lhfile.events):
 
     #print(event.nup,event.process_id,event.weight,event.scale,event.alpha_qcd,event.alpha_qed)
     #output += "%+.10e " % (evnent.nup)
-    output += "%-7d " % (6)
+    #output += "%-7d " % (6)
+    output += "%-7d " % (8) # Number of particles 
     output += "%d " % (event.process_id)
     output += "%+.7e " % (event.weight)
     output += "%.8e " % (event.scale)
@@ -81,6 +82,7 @@ for mginfo,event in zip(meta,lhfile.events):
             #print(energy,px,py,pz)
             #print(mlt.invmass(energy,px,py,pz))
             child_masses = np.array([4.7,80.419002])
+            Wchild_masses = np.array([0.105,0.00000000001])
             #child_masses = np.array([4.7,2.419002])
 
             #w = -1
@@ -89,14 +91,18 @@ for mginfo,event in zip(meta,lhfile.events):
             #print(w)
             #print(children)
 
+            Wmom = None
             for i,child in enumerate(children):
                 raw_particle = []
                 if i==0:
                     raw_particle.append(5) # b
+                    raw_particle.append(1) # Status
                 else:
                     raw_particle.append(24) # W+
+                    Wmom = [child[0],child[1],child[2],child[3]]
+                    #raw_particle.append(1) # Status
+                    raw_particle.append(2) # Status, if we decay the W
 
-                raw_particle.append(1) # Status
                 raw_particle.append(ipart) # First mother
                 raw_particle.append(ipart) # Second mother
                 if i==0: # b
@@ -117,6 +123,34 @@ for mginfo,event in zip(meta,lhfile.events):
                 p = pylhef.Particle(raw_particle)
 
                 new_children.append([p,ipart+1])
+
+            # Now decay the W
+            w,children = decay_particle(Wmom,Wchild_masses)
+            for i,child in enumerate(children):
+                raw_particle = []
+                if i==0:
+                    raw_particle.append(-13) # mu+
+                else:
+                    raw_particle.append(14) # nu_mu
+
+                raw_particle.append(1) # Status
+                raw_particle.append(ipart+2) # First mother, the W
+                raw_particle.append(ipart+2) # Second mother, the W
+                raw_particle.append(0) # Color 
+                raw_particle.append(0) # Color 
+
+                raw_particle.append(child[1]) # 
+                raw_particle.append(child[2]) # 
+                raw_particle.append(child[3]) # 
+                raw_particle.append(child[0]) # 
+                raw_particle.append(mlt.invmass(child[0],child[1],child[2],child[3])) # 
+                raw_particle.append(0.0) # Lifetime
+                raw_particle.append(-1) # SpinUp # NOT CORRECT RIGHT NOW LOOK AT PYLHEF
+
+                p = pylhef.Particle(raw_particle)
+
+                new_children.append([p,ipart+1+2])
+
 
 
     for nc in new_children:
