@@ -28,7 +28,7 @@ def get_header(infilename):
 
 
 # Write particle out
-def write_particle(p,status=1,parent_index=None):
+def write_particle(p,status=None,parent_index=None):
     
     output = ""
     output += "%9d " % (p.id)

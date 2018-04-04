@@ -3,6 +3,7 @@ import mod_lhe_tools as mlt
 import pylhef
 from decay_using_tgenphasespace import decay_particle
 import numpy as np
+import ROOT
 
 infilename = sys.argv[1]
 
@@ -26,6 +27,7 @@ for line in tmpinfile:
 
 
 
+rnd = ROOT.TRandom()
 
 
 outfilename = "testout.lhe"
@@ -82,16 +84,18 @@ for mginfo,event in zip(meta,lhfile.events):
             #print(energy,px,py,pz)
             #print(mlt.invmass(energy,px,py,pz))
             child_masses = np.array([4.7,80.419002])
-            Wchild_masses = np.array([0.105,0.00000000001])
+            child_widths = np.array([0,2.085])
+            Wchild_masses = np.array([0.105,0.0])
             #child_masses = np.array([4.7,2.419002])
 
             #w = -1
             #while w<0:
-            w,children = decay_particle([energy,px,py,pz],child_masses)
+            w,children = decay_particle([energy,px,py,pz],child_masses,child_widths=child_widths,rnd=rnd)
             #print(w)
             #print(children)
 
             Wmom = None
+            #print(children)
             for i,child in enumerate(children):
                 raw_particle = []
                 if i==0:
@@ -121,11 +125,13 @@ for mginfo,event in zip(meta,lhfile.events):
                 raw_particle.append(-1) # SpinUp # NOT CORRECT RIGHT NOW LOOK AT PYLHEF
 
                 p = pylhef.Particle(raw_particle)
+                #print(raw_particle)
+                #print(p.status)
 
                 new_children.append([p,ipart+1])
 
             # Now decay the W
-            w,children = decay_particle(Wmom,Wchild_masses)
+            w,children = decay_particle(Wmom,Wchild_masses,rnd=rnd)
             for i,child in enumerate(children):
                 raw_particle = []
                 if i==0:
@@ -143,7 +149,10 @@ for mginfo,event in zip(meta,lhfile.events):
                 raw_particle.append(child[2]) # 
                 raw_particle.append(child[3]) # 
                 raw_particle.append(child[0]) # 
-                raw_particle.append(mlt.invmass(child[0],child[1],child[2],child[3])) # 
+                if i==0: # mu+
+                    raw_particle.append(mlt.invmass(child[0],child[1],child[2],child[3])) # 
+                else: # nu_mu
+                    raw_particle.append(0.0)
                 raw_particle.append(0.0) # Lifetime
                 raw_particle.append(-1) # SpinUp # NOT CORRECT RIGHT NOW LOOK AT PYLHEF
 

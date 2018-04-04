@@ -1,9 +1,13 @@
 import ROOT
 import numpy as np
 from numpy import sin,cos,arccos,sqrt
+import time
 
 ################################################################################
-def decay_particle(parent_p4, child_masses, max_weight=0):
+def decay_particle(parent_p4, child_masses, max_weight=0, child_widths=None, rnd = None):
+
+    if rnd == None:
+        rnd = ROOT.TRandom(int(1000000*time.time()))
 
     event = ROOT.TGenPhaseSpace()
 
@@ -19,7 +23,24 @@ def decay_particle(parent_p4, child_masses, max_weight=0):
     weight = -1e9
     children = None
 
-    if event.SetDecay(parent_TLV, len(child_masses), child_masses, ""):
+    masses_to_use = []
+    if child_widths is None:
+        masses_to_use = list(child_masses)
+    else:
+        for m,w in zip(child_masses,child_widths):
+            mass = 1e9
+            if w is None or w==0:
+                masses_to_use.append(m)
+            else:
+                #print("diff: ",parent_TLV.M()-sum(masses_to_use))
+                while mass > (parent_TLV.M()-sum(masses_to_use)) or mass<0: 
+                    mass = rnd.BreitWigner(m,w)
+                    #print('mass: ',mass)
+                masses_to_use.append(mass)
+
+    masses_to_use = np.array(masses_to_use)
+    #print(masses_to_use)
+    if event.SetDecay(parent_TLV, len(masses_to_use), masses_to_use, ""):
 
         wmax = event.GetWtMax()
         #print("wtmax: ",wmax)
