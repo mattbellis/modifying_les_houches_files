@@ -49,7 +49,9 @@ def lorentz_boost(pmom, rest_frame):
 
     return boosted_vec
 
+################################################################################
 
+################################################################################
 def angle2vecs(a,b):
     
     #print(type(a[0]),type(b[0]))
@@ -62,16 +64,16 @@ def angle2vecs(a,b):
     #print(costh,dp)
     
     return costh
+################################################################################
 
 
 # In[3]:
 
 
-#lhfile1 = pylhef.read('madgraph_ttbar_tWb.lhe')
-#lhfile2 = pylhef.read('madgraph_ttbar_PS_tWb.lhe')
-
-lhfile1 = pylhef.read('madgraph_ttbar_tWb_Wmunu.lhe')
-lhfile2 = pylhef.read('madgraph_ttbar_tWb_Wmunu_PS.lhe')
+lhfile1 = pylhef.read('bnv_events_bcmu_MG_1111_0000.lhe')
+lhfile2 = pylhef.read('bnv_events_bcmu_MG_1111_1111.lhe')
+#lhfile2 = pylhef.read('bnv_events_bcmu_MG_1010_0000.lhe')
+#lhfile2 = pylhef.read('bnv_events_bcmu_PS.lhe')
 
 #lhfile2 = pylhef.read('testout.lhe')
 
@@ -97,6 +99,8 @@ muWangle = [[], []]
 
 muWanglelab = [[], []]
 
+lepintopframe = [[], []]
+
 
 for i,infile in enumerate(infiles):
     for j,event in enumerate(infile.events):
@@ -108,6 +112,35 @@ for i,infile in enumerate(infiles):
         
         particles=event.particles      #finds the index of the top quark
         for particle in particles:
+
+            pid = np.abs(particle.id)
+            #print(pid)
+            #if pid>=11 and pid<=18:
+            if pid==13:
+                #print(pid)
+                first,last = particle.first_mother,particle.last_mother
+                if first==last and np.abs(particles[first-1].id)==6:
+                    #print("here!")
+                    p = particle.p
+                    Mt = particles[first-1].mass
+                    topp = particles[first-1].p
+                    boosted = lorentz_boost(p,topp)
+                    Ee = boosted.item(0,0)
+                    lepintopframe[i].append(2*Ee/Mt)
+                '''
+                elif first==last and np.abs(particles[first-1].id)==24:
+                    #print("HERE")
+                    p = particle.p
+                    W = particles[first-1]
+                    Wfirst = W.first_mother
+                    top = particles[Wfirst-1]
+                    topp = top.p
+                    Mt = top.mass
+                    boosted = lorentz_boost(p,topp)
+                    Ee = boosted.item(0,0)
+                    esm.append(2*Ee/Mt)
+                '''
+            ''' 
             if particle.id == 6:
                 
                 ptop = particle.p
@@ -180,6 +213,7 @@ for i,infile in enumerate(infiles):
 
                 costh = angle2vecs(Wlabmom,mulabmom)
                 muWanglelab[i].append(costh)
+            '''
                 
                         
 print("Finished processing data...")
@@ -194,6 +228,21 @@ alphas = [0.3, 1.0]
 lws = [1, 4]
 
 
+print(len(lepintopframe))
+print(len(lepintopframe[0]))
+print(len(lepintopframe[1]))
+
+plt.figure(figsize=(6,4))
+plt.subplot(1,1,1)
+for i,T in enumerate(lepintopframe):
+    plt.hist(T, bins,range=(0,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+plt.legend(loc='upper left')
+plt.xlabel(r'$2E_{\ell}/m_t$', fontsize=18), plt.ylabel('frequency',fontsize=18)
+plt.title('Top quark (lab frame)',fontsize=18)
+plt.tight_layout()
+plt.savefig('BNV_lep_mom_tframe.png')
+
+'''
 plt.figure(figsize=(6,4))
 plt.subplot(1,1,1)
 for i,T in enumerate(Tmom):
@@ -267,5 +316,6 @@ plt.xlabel(r'\theta$',fontsize=18), plt.ylabel('frequency')
 plt.title('Angle between $\mu^{+}$ $W^+$ in lab frame',fontsize=12)
 plt.tight_layout()
 plt.savefig('muW_angle_lab.png')
+'''
 
 plt.show()

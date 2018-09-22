@@ -51,7 +51,7 @@ for mginfo,event in zip(meta,lhfile.events):
     #print(event.nup,event.process_id,event.weight,event.scale,event.alpha_qcd,event.alpha_qed)
     #output += "%+.10e " % (evnent.nup)
     #output += "%-7d " % (6)
-    output += "%-7d " % (8) # Number of particles 
+    output += "%-7d " % (7) # Number of particles 
     output += "%d " % (event.process_id)
     output += "%+.7e " % (event.weight)
     output += "%.8e " % (event.scale)
