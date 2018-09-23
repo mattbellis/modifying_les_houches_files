@@ -70,10 +70,10 @@ def angle2vecs(a,b):
 # In[3]:
 
 
-lhfile1 = pylhef.read('bnv_events_bcmu_MG_1111_0000.lhe')
-lhfile2 = pylhef.read('bnv_events_bcmu_MG_1111_1111.lhe')
+#lhfile1 = pylhef.read('bnv_events_bcmu_MG_1111_0000.lhe')
+lhfile1 = pylhef.read('bnv_events_bcmu_MG_1111_1111.lhe')
 #lhfile2 = pylhef.read('bnv_events_bcmu_MG_1010_0000.lhe')
-#lhfile2 = pylhef.read('bnv_events_bcmu_PS.lhe')
+lhfile2 = pylhef.read('bnv_events_bcmu_PS.lhe')
 
 #lhfile2 = pylhef.read('testout.lhe')
 
@@ -92,11 +92,11 @@ Wmom = [[],[]]    # momentum of W
 Wmom1 = [[], []]
 Wtangle = [[], []]
 
-muTmom = [[], []]
-mumom = [[],[]]
+muTmom = [[],[]]
 muWmom = [[], []]
 muWangle = [[], []]
 
+bTmom = [[],[]]
 muWanglelab = [[], []]
 
 lepintopframe = [[], []]
@@ -127,6 +127,25 @@ for i,infile in enumerate(infiles):
                     boosted = lorentz_boost(p,topp)
                     Ee = boosted.item(0,0)
                     lepintopframe[i].append(2*Ee/Mt)
+
+                    x = particle.p[1]
+                    y = particle.p[2]
+                    z = particle.p[3]
+                    
+                    momentum = math.sqrt(x**2+y**2)
+                    muTmom[i].append(momentum)
+            elif pid==5:
+                #print(pid)
+                first,last = particle.first_mother,particle.last_mother
+                if first==last and np.abs(particles[first-1].id)==6:
+                    #print("here!")
+
+                    x = particle.p[1]
+                    y = particle.p[2]
+                    z = particle.p[3]
+                    
+                    momentum = math.sqrt(x**2+y**2)
+                    bTmom[i].append(momentum)
                 '''
                 elif first==last and np.abs(particles[first-1].id)==24:
                     #print("HERE")
@@ -241,6 +260,27 @@ plt.xlabel(r'$2E_{\ell}/m_t$', fontsize=18), plt.ylabel('frequency',fontsize=18)
 plt.title('Top quark (lab frame)',fontsize=18)
 plt.tight_layout()
 plt.savefig('BNV_lep_mom_tframe.png')
+
+plt.figure(figsize=(6,4))
+plt.subplot(1,1,1)
+for i,T in enumerate(muTmom):
+    plt.hist(T, bins,range=(0,200), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+plt.legend(loc='upper right')
+plt.xlabel(r'$\mu$ p$_{\rm T} [GeV/c]$', fontsize=18), plt.ylabel('frequency',fontsize=18)
+plt.title('Muon momentum (lab frame)',fontsize=18)
+plt.tight_layout()
+plt.savefig('BNV_lep_mom_labframe.png')
+
+plt.figure(figsize=(6,4))
+plt.subplot(1,1,1)
+for i,T in enumerate(bTmom):
+    plt.hist(T, bins,range=(0,200), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+plt.legend(loc='upper right')
+plt.xlabel(r'$b$ p$_{\rm T} [GeV/c]$', fontsize=18), plt.ylabel('frequency',fontsize=18)
+plt.title('b-quark momentum (lab frame)',fontsize=18)
+plt.tight_layout()
+plt.savefig('BNV_b_mom_labframe.png')
+
 
 '''
 plt.figure(figsize=(6,4))
