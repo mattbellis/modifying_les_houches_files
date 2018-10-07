@@ -179,8 +179,10 @@ lo = 0
 
 labels = ['BNV model (MG5, params 0000)', 'BNV model (MG5, params 1111)','Phase space (our decay)']
 fills = [True,False, False]
-alphas = [0.3, 0.3, 1.0]
+alphas = [0.8, 0.8, 1.0]
 lws = [1, 4, 4]
+colors = ['c','b','r']
+linestyles = ['-','-.','-']
 
 
 print(len(lepintopframe))
@@ -190,7 +192,7 @@ print(len(lepintopframe[1]))
 plt.figure(figsize=(6,4))
 plt.subplot(1,1,1)
 for i,T in enumerate(lepintopframe):
-    plt.hist(T, bins,range=(0,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(0,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 plt.legend(loc='upper left')
 plt.xlabel(r'$2E_{\ell}/m_t$', fontsize=18), plt.ylabel('frequency',fontsize=18)
 plt.title('Top quark (lab frame)',fontsize=18)
@@ -200,7 +202,7 @@ plt.savefig('BNV_lep_mom_tframe.png')
 plt.figure(figsize=(6,4))
 plt.subplot(1,1,1)
 for i,T in enumerate(muTmom):
-    plt.hist(T, bins,range=(0,200), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(0,200), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 plt.legend(loc='upper right')
 plt.xlabel(r'$\mu$ p$_{\rm T} [GeV/c]$', fontsize=18), plt.ylabel('frequency',fontsize=18)
 plt.title('Muon momentum (lab frame)',fontsize=18)
@@ -210,7 +212,7 @@ plt.savefig('BNV_lep_mom_labframe.png')
 plt.figure(figsize=(6,4))
 plt.subplot(1,1,1)
 for i,T in enumerate(bTmom):
-    plt.hist(T, bins,range=(0,200), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(0,200), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 plt.legend(loc='upper right')
 plt.xlabel(r'$b$ p$_{\rm T} [GeV/c]$', fontsize=18), plt.ylabel('frequency',fontsize=18)
 plt.title('b-quark momentum (lab frame)',fontsize=18)
@@ -220,7 +222,7 @@ plt.savefig('BNV_b_mom_labframe.png')
 plt.figure(figsize=(6,4))
 plt.subplot(1,1,1)
 for i,T in enumerate(bcangle):
-    plt.hist(T, bins,range=(-1,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(-1,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 plt.legend(loc='upper left')
 plt.xlabel(r'$\cos(\theta)$ $b-c$-quark (lab frame)', fontsize=18), plt.ylabel('frequency',fontsize=18)
 plt.title(r'$\cos(\theta)$ $b-c$-quark (lab frame)',fontsize=18)

@@ -190,14 +190,19 @@ lo = 0
 
 labels = ['Standard model (MG5)', 'Phase space (our decay)']
 fills = [True,False]
-alphas = [0.3, 1.0]
+alphas = [0.8, 1.0]
 lws = [1, 4]
+#alphas = [0.8, 0.8, 1.0]
+#lws = [1, 4, 4]
+colors = ['c','r']
+linestyles = ['-','-']
+
 
 
 plt.figure(figsize=(6,4))
 plt.subplot(1,1,1)
 for i,T in enumerate(Tmom):
-    plt.hist(T, bins,range=(0,500), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(0,500), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 plt.legend(loc='upper right')
 plt.xlabel('Transverse momentum (GeV/c)', fontsize=18), plt.ylabel('frequency',fontsize=18)
 plt.title('Top quark (lab frame)',fontsize=18)
@@ -209,8 +214,7 @@ plt.savefig('top_Tmom.png')
 plt.figure(figsize=(6,4))
 plt.subplot(1,1,1)
 for i,T in enumerate(WTmom):
-    #plt.hist(T, bins,range=(lo,hi), alpha=0.5, label='top momentum',histtype='step',fill=False,linewidth=4)
-    plt.hist(T, bins,range=(0,500), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(0,500), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 
 plt.legend(loc='upper right')
 plt.xlabel('Transverse Momentum (GeV/c)',fontsize=18), plt.ylabel('frequency',fontsize=18)
@@ -223,7 +227,8 @@ plt.savefig('W_Tmom.png')
 plt.figure(figsize=(6,4))
 for i,T in enumerate(Wtangle):
     print(len(T))
-    plt.hist(T, bins,range=(-1,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(-1,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
+    #plt.hist(T, bins,range=(-1,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
 
 plt.legend(loc='lower right')
 plt.xlabel(r'$\cos \theta$',fontsize=18), plt.ylabel('frequency')
@@ -236,7 +241,7 @@ plt.figure(figsize=(6,4))
 for i,T in enumerate(muTmom):
     print(len(T))
     #plt.hist(T, bins,range=(0,300), alpha=0.5, label='top momentum',histtype='step',fill=False,linewidth=4)
-    plt.hist(T, bins,range=(0,200), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(0,200), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 plt.legend(loc='upper right')
 plt.xlabel('Transverse momentum (GeV/c)', fontsize=18), plt.ylabel('frequency',fontsize=18)
 plt.title(r'$\mu^+$ (lab frame)',fontsize=18)
@@ -248,7 +253,8 @@ plt.figure(figsize=(6,4))
 for i,T in enumerate(muWangle):
     print(len(T))
     #plt.hist(T, bins,range=(-1,1), alpha=0.5, label='top momentum',histtype='step',fill=False,linewidth=4)
-    plt.hist(T, bins,range=(-1,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    #plt.hist(T, bins,range=(-1,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(T, bins,range=(-1,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 
 plt.legend(loc='lower left')
 plt.xlabel(r'$\cos \theta$',fontsize=18), plt.ylabel('frequency')
@@ -260,10 +266,11 @@ plt.figure(figsize=(6,4))
 for i,T in enumerate(muWanglelab):
     print(len(T))
     #plt.hist(T, bins,range=(-1,1), alpha=0.5, label='top momentum',histtype='step',fill=False,linewidth=4)
-    plt.hist(np.arccos(T), bins,range=(0,3.2), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    #plt.hist(np.arccos(T), bins,range=(0,3.2), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i])
+    plt.hist(np.arccos(T), bins,range=(0,3.2), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 
 plt.legend(loc='upper right')
-plt.xlabel(r'\theta$',fontsize=18), plt.ylabel('frequency')
+plt.xlabel(r'$\theta$',fontsize=18), plt.ylabel('frequency')
 plt.title('Angle between $\mu^{+}$ $W^+$ in lab frame',fontsize=12)
 plt.tight_layout()
 plt.savefig('muW_angle_lab.png')
