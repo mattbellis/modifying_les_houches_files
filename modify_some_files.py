@@ -130,6 +130,7 @@ for mginfo,event in zip(meta,lhfile.events):
 
                 new_children.append([p,ipart+1])
 
+            '''
             # Now decay the W
             w,children = decay_particle(Wmom,Wchild_masses,rnd=rnd)
             for i,child in enumerate(children):
@@ -159,6 +160,7 @@ for mginfo,event in zip(meta,lhfile.events):
                 p = pylhef.Particle(raw_particle)
 
                 new_children.append([p,ipart+1+2])
+            '''
 
 
 
