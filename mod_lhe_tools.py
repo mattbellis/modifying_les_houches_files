@@ -38,8 +38,8 @@ def write_particle(p,status=None,parent_index=None):
         output += "%2d " % (status)
 
     if parent_index==None:
-        output += "%4s " % (1) # Parent index
-        output += "%4s " % (2) # Parent index
+        output += "%4s " % (p.first_mother) # Parent index
+        output += "%4s " % (p.last_mother) # Parent index
     else:
         output += "%4s " % (parent_index) # Parent index
         output += "%4s " % (parent_index) # Parent index

@@ -132,8 +132,8 @@ for mginfo,event in zip(meta,lhfile.events):
 
             for nc in new_children:
                 p = nc[0]
-                ipart = nc[1]
-                output += mlt.write_particle(p,parent_index=ipart)
+                ip = nc[1]
+                output += mlt.write_particle(p,parent_index=ip)
                 #print(output)
 
     output += mginfo

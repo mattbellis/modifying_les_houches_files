@@ -1,0 +1,7 @@
+Check that there are 0's for the mothers for the incoming gluons and quarks. 
+
+Make sure that the mother indices are correct for the particles we generate. 
+
+Make sure that the daughter particles are final state particles and that
+they immediately follow the parent in the file, otherwise there will be color
+flow issues. 
