@@ -7,7 +7,7 @@ import ROOT
 
 infilename = sys.argv[1]
 
-split_by_Nevents = 100
+split_by_Nevents = 10
 
 
 meta = []
