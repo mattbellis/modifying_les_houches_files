@@ -7,7 +7,7 @@ import ROOT
 
 infilename = sys.argv[1]
 
-split_by_Nevents = 10
+split_by_Nevents = 1000
 
 
 meta = []
@@ -60,9 +60,7 @@ for mginfo,event in zip(meta,lhfile.events):
     output = "<event>\n"
 
     #print(event.nup,event.process_id,event.weight,event.scale,event.alpha_qcd,event.alpha_qed)
-    #output += "%+.10e " % (evnent.nup)
-    output += "%-7d " % (6) # Number of particles
-    #output += "%-7d " % (7) # Number of particles 
+    output += "%-7d " % (event.nup) # Number of particles
     output += "%d " % (event.process_id)
     output += "%+.7e " % (event.weight)
     output += "%.8e " % (event.scale)

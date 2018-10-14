@@ -30,7 +30,7 @@ for line in tmpinfile:
 rnd = ROOT.TRandom()
 
 
-outfilename = "testout_bnv.lhe"
+outfilename = "bnv_ttbar_t2mubc.lhe"
 
 header = mlt.get_header(infilename)
 footer = '</LesHouchesEvents>'
@@ -59,8 +59,6 @@ for mginfo,event in zip(meta,lhfile.events):
     output += "%.8e\n" % (event.alpha_qed)
 
     particles = event.particles
-
-    new_children = []
 
     for ipart,particle in enumerate(particles):
 
@@ -92,18 +90,20 @@ for mginfo,event in zip(meta,lhfile.events):
             #print(w)
             #print(children)
 
+            new_children = []
+
             Wmom = None
             #print(children)
             for i,child in enumerate(children):
                 raw_particle = []
                 if i==0:
-                    raw_particle.append(-13) # b
+                    raw_particle.append(-13) # mu+
                     raw_particle.append(1) # Status
                 elif i==1:
-                    raw_particle.append(-5) # b
+                    raw_particle.append(-5) # anti-b
                     raw_particle.append(1) # Status
                 else:
-                    raw_particle.append(-4) # s
+                    raw_particle.append(-4) # anti-charm
                     raw_particle.append(1) # Status
 
                 raw_particle.append(ipart) # First mother
@@ -132,18 +132,15 @@ for mginfo,event in zip(meta,lhfile.events):
 
                 new_children.append([p,ipart+1])
 
-
-
-
-    for nc in new_children:
-        p = nc[0]
-        ipart = nc[1]
-        output += mlt.write_particle(p,parent_index=ipart)
-        #print(output)
+            for nc in new_children:
+                p = nc[0]
+                ipart = nc[1]
+                output += mlt.write_particle(p,parent_index=ipart)
+                #print(output)
 
     output += mginfo
     output += "</event>\n"
-    print(output)
+    #print(output)
     outfile.write(output)
 
 
