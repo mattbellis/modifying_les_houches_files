@@ -69,6 +69,13 @@ for mginfo,event in zip(meta,lhfile.events):
         elif particle.id == 6: # top quark
 
             particle.status = 2 # BECAUSE IT DECAYED IN LHE IS THIS TRUE???
+            child_colors = [0, 0]
+            if particle.color[0]==501:
+                child_colors = [502,503]
+            elif particle.color[0]==502:
+                child_colors = [501,503]
+            elif particle.color[0]==503:
+                child_colors = [501,502]
 
             output += mlt.write_particle(particle,status=2)
             #print(output)
@@ -109,14 +116,14 @@ for mginfo,event in zip(meta,lhfile.events):
                 raw_particle.append(ipart) # First mother
                 raw_particle.append(ipart) # Second mother
                 if i==0: # mu
-                    raw_particle.append(0) # Color # NOT CORRECT RIGHT NOW
-                    raw_particle.append(0) # Color # NOT CORRECT RIGHT NOW
+                    raw_particle.append(0) # Color 
+                    raw_particle.append(0) # Color 
                 elif i==1: # b
                     raw_particle.append(0) # Color # NOT CORRECT RIGHT NOW
-                    raw_particle.append(501) # Color # NOT CORRECT RIGHT NOW
+                    raw_particle.append(child_colors[0]) # Color # MAYBE CORRECT RIGHT NOW
                 else: # s
                     raw_particle.append(0) # Color # NOT CORRECT RIGHT NOW
-                    raw_particle.append(502) # Color # NOT CORRECT RIGHT NOW
+                    raw_particle.append(child_colors[1]) # Color # MAYBE CORRECT RIGHT NOW
 
                 raw_particle.append(child[1]) # 
                 raw_particle.append(child[2]) # 

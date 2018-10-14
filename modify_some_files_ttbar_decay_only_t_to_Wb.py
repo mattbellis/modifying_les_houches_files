@@ -129,7 +129,6 @@ for mginfo,event in zip(meta,lhfile.events):
 
                 new_children.append([p,ipart+1])
 
-
             for nc in new_children:
                 p = nc[0]
                 ip = nc[1]

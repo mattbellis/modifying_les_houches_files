@@ -4,10 +4,19 @@ import pylhef
 from decay_using_tgenphasespace import decay_particle
 import numpy as np
 import ROOT
+import os
 
 infilename = sys.argv[1]
 
-split_by_Nevents = 1000
+split_by_Nevents = 10
+
+outdir = "SPLIT_{0}_by_{1:d}_events".format(infilename.split('/')[-1].split('.lhe')[0], split_by_Nevents)
+print(outdir)
+
+if os.path.exists(outdir)==False:
+    os.mkdir(outdir)
+
+#exit()
 
 
 meta = []
@@ -51,7 +60,7 @@ for mginfo,event in zip(meta,lhfile.events):
     file_not_closed = True
 
     if ev_count == 0:
-        outfilename = "{0}_{1:d}_{2:d}.lhe".format(infilename.split('.lhe')[0],begin_events, end_events-1)
+        outfilename = "{3}/{0}_{1:d}_{2:d}.lhe".format(infilename.split('/')[-1].split('.lhe')[0],begin_events, end_events-1, outdir)
         print(outfilename)
         outfile = open(outfilename,"w")
         outfile.write(header)
