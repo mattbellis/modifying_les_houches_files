@@ -6,6 +6,54 @@ import numpy as np
 import ROOT
 
 infilename = sys.argv[1]
+#decay = 't2mubc'
+#decay = 't2mudc'
+#decay = 't2mubu'
+#decay = 't2mudu'
+decay = 't2ebc'
+#decay = 't2edc'
+#decay = 't2ebu'
+#decay = 't2edu'
+
+#decay = 'tbar2mubc'
+#decay = 'tbar2mudc'
+#decay = 'tbar2mubu'
+#decay = 'tbar2mudu'
+#decay = 'tbar2ebc'
+#decay = 'tbar2edc'
+#decay = 'tbar2ebu'
+#decay = 'tbar2edu'
+
+top = 6
+lep = -13
+qdown = -5
+qup = -4
+
+lep_mass = 0.10566
+qdown_mass = 4.7
+qup_mass = 1.42
+
+if decay.find('eb')>=0 or decay.find('ed')>=0:
+    lep = -11
+    lep_mass = 0.000511
+
+if decay.find('dc')>=0 or decay.find('du')>=0:
+    qdown = -1
+    qdown_mass = 0.0047
+
+if decay.find('bu')>=0 or decay.find('du')>=0:
+    qup = -2
+    qup_mass = 0.0022
+
+
+if decay[0:5]=='tbar':
+    top *= 1
+    lep *= 1
+    qup *= 1
+    qdown *= 1
+
+print("Going to decay {0} --> {1} {2} {3}".format(top,lep,qdown,qup))
+#exit()
 
 meta = []
 tmpinfile = open(infilename,'r')
@@ -30,7 +78,14 @@ for line in tmpinfile:
 rnd = ROOT.TRandom()
 
 
-outfilename = "bnv_ttbar_t2mubc.lhe"
+#outfilename = "bnv_ttbar_t2mubc.lhe"
+#outfilename = "bnv_ttbar_tbar2bjj_t2mubc.lhe"
+#outfilename = "bnv_ttbar_tbar2bmunu_t2mubc.lhe"
+#outfilename = "bnv_ttbar_tbar2blnu_t2mubc.lhe"
+#outfilename = infilename.split('/')[-1].split('.lhe')[0] + '_' + decay + '.lhe'
+outfilename = infilename.split('/')[-4].split('PROC_')[1] + '_BNV_PS_' + decay + '.lhe'
+print(outfilename)
+#exit()
 
 header = mlt.get_header(infilename)
 footer = '</LesHouchesEvents>'
@@ -51,7 +106,8 @@ for mginfo,event in zip(meta,lhfile.events):
     #print(event.nup,event.process_id,event.weight,event.scale,event.alpha_qcd,event.alpha_qed)
     #output += "%+.10e " % (evnent.nup)
     #output += "%-7d " % (6)
-    output += "%-7d " % (7) # Number of particles 
+    #output += "%-7d " % (7) # Number of particles  # This is for just the ttbar
+    output += "%-7d " % (11) # Number of particles  # This is for just the ttbar, tbar--> b j j 
     output += "%d " % (event.process_id)
     output += "%+.7e " % (event.weight)
     output += "%.8e " % (event.scale)
@@ -62,11 +118,13 @@ for mginfo,event in zip(meta,lhfile.events):
 
     for ipart,particle in enumerate(particles):
 
-        if particle.id != 6:
+        #if particle.id != 6:
+        if particle.id != top:
             output += mlt.write_particle(particle)
             #print(output)
 
-        elif particle.id == 6: # top quark
+        #elif particle.id == 6: # top quark
+        elif particle.id == top: # top quark
 
             particle.status = 2 # BECAUSE IT DECAYED IN LHE IS THIS TRUE???
             child_colors = [0, 0]
@@ -88,7 +146,8 @@ for mginfo,event in zip(meta,lhfile.events):
             # muon, b-quark, and s-quark
             #print(energy,px,py,pz)
             #print(mlt.invmass(energy,px,py,pz))
-            child_masses = np.array([0.105,4.7,1.42])
+            #child_masses = np.array([0.105,4.7,1.42])
+            child_masses = np.array([lep_mass, qdown_mass, qup_mass])
             child_widths = np.array([0,0,0])
 
             #w = -1
@@ -104,13 +163,16 @@ for mginfo,event in zip(meta,lhfile.events):
             for i,child in enumerate(children):
                 raw_particle = []
                 if i==0:
-                    raw_particle.append(-13) # mu+
+                    #raw_particle.append(-13) # mu+
+                    raw_particle.append(lep) # 
                     raw_particle.append(1) # Status
                 elif i==1:
-                    raw_particle.append(-5) # anti-b
+                    #raw_particle.append(-5) # anti-b
+                    raw_particle.append(qdown) # 
                     raw_particle.append(1) # Status
                 else:
-                    raw_particle.append(-4) # anti-charm
+                    #raw_particle.append(-4) # anti-charm
+                    raw_particle.append(qup) #
                     raw_particle.append(1) # Status
 
                 raw_particle.append(ipart) # First mother

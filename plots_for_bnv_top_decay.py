@@ -70,10 +70,10 @@ def angle2vecs(a,b):
 # In[3]:
 
 
-lhfile1 = pylhef.read('bnv_events_bcmu_MG_1111_0000.lhe')
-lhfile2 = pylhef.read('bnv_events_bcmu_MG_1111_1111.lhe')
-#lhfile2 = pylhef.read('bnv_events_bcmu_MG_1010_0000.lhe')
-lhfile3 = pylhef.read('bnv_events_bcmu_PS.lhe')
+lhfile1 = pylhef.read('LHE_files/bnv_events_bcmu_MG_1111_0000.lhe')
+lhfile2 = pylhef.read('LHE_files/bnv_events_bcmu_MG_1111_1111.lhe')
+#lhfile2 = pylhef.read('LHE_files/bnv_events_bcmu_MG_1010_0000.lhe')
+lhfile3 = pylhef.read('LHE_files/bnv_events_bcmu_PS.lhe')
 
 #lhfile2 = pylhef.read('testout.lhe')
 
@@ -195,7 +195,7 @@ for i,T in enumerate(lepintopframe):
     plt.hist(T, bins,range=(0,1), alpha=alphas[i], label=labels[i],histtype='step',fill=fills[i],linewidth=lws[i],linestyle=linestyles[i],color=colors[i])
 plt.legend(loc='upper left')
 plt.xlabel(r'$2E_{\ell}/m_t$', fontsize=18), plt.ylabel('frequency',fontsize=18)
-plt.title('Top quark (lab frame)',fontsize=18)
+plt.title(r'Charged lepton $E$ in $t$ rest frame',fontsize=18)
 plt.tight_layout()
 plt.savefig('BNV_lep_mom_tframe.png')
 

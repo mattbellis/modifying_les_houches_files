@@ -70,8 +70,8 @@ def angle2vecs(a,b):
 #lhfile1 = pylhef.read('madgraph_ttbar_tWb.lhe')
 #lhfile2 = pylhef.read('madgraph_ttbar_PS_tWb.lhe')
 
-lhfile1 = pylhef.read('madgraph_ttbar_tWb_Wmunu.lhe')
-lhfile2 = pylhef.read('madgraph_ttbar_tWb_Wmunu_PS.lhe')
+lhfile1 = pylhef.read('LHE_files/madgraph_ttbar_tWb_Wmunu.lhe')
+lhfile2 = pylhef.read('LHE_files/madgraph_ttbar_tWb_Wmunu_PS.lhe')
 
 #lhfile2 = pylhef.read('testout.lhe')
 
@@ -258,7 +258,7 @@ for i,T in enumerate(muWangle):
 
 plt.legend(loc='lower left')
 plt.xlabel(r'$\cos \theta$',fontsize=18), plt.ylabel('frequency')
-plt.title('Angle between $\mu^{+}$ in $W^+$ rest frame and and $W^+$ in $t$ rest frame',fontsize=12)
+plt.title('Angle between $\mu^{+}$ in $W^+$ rest frame and $W^+$ in $t$ rest frame',fontsize=12)
 plt.tight_layout()
 plt.savefig('muW_angle.png')
 
