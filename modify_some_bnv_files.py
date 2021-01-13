@@ -6,11 +6,12 @@ import numpy as np
 import ROOT
 
 infilename = sys.argv[1]
+decay = sys.argv[2]
 #decay = 't2mubc'
 #decay = 't2mudc'
 #decay = 't2mubu'
 #decay = 't2mudu'
-decay = 't2ebc'
+#decay = 't2ebc'
 #decay = 't2edc'
 #decay = 't2ebu'
 #decay = 't2edu'
@@ -83,7 +84,8 @@ rnd = ROOT.TRandom()
 #outfilename = "bnv_ttbar_tbar2bmunu_t2mubc.lhe"
 #outfilename = "bnv_ttbar_tbar2blnu_t2mubc.lhe"
 #outfilename = infilename.split('/')[-1].split('.lhe')[0] + '_' + decay + '.lhe'
-outfilename = infilename.split('/')[-4].split('PROC_')[1] + '_BNV_PS_' + decay + '.lhe'
+#outfilename = infilename.split('/')[-4].split('PROC_')[1] + '_BNV_PS_' + decay + '.lhe'
+outfilename = infilename.split('.lhe')[0] + '_BNV_PS_' + decay + '.lhe'
 print(outfilename)
 #exit()
 
