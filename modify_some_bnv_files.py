@@ -47,11 +47,11 @@ if decay.find('bu')>=0 or decay.find('du')>=0:
     qup_mass = 0.0022
 
 
-if decay[0:5]=='tbar':
-    top *= 1
-    lep *= 1
-    qup *= 1
-    qdown *= 1
+if decay.find('tbar')>=0:
+    top *= -1
+    lep *= -1
+    qup *= -1
+    qdown *= -1
 
 print("Going to decay {0} --> {1} {2} {3}".format(top,lep,qdown,qup))
 #exit()
@@ -86,6 +86,10 @@ rnd = ROOT.TRandom()
 #outfilename = infilename.split('/')[-1].split('.lhe')[0] + '_' + decay + '.lhe'
 #outfilename = infilename.split('/')[-4].split('PROC_')[1] + '_BNV_PS_' + decay + '.lhe'
 outfilename = infilename.split('.lhe')[0] + '_BNV_PS_' + decay + '.lhe'
+
+for n in range(0,50):
+    ntag = '_{0:02d}'.format(n)
+    outfilename = outfilename.replace(ntag,'')
 print(outfilename)
 #exit()
 
