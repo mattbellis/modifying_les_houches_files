@@ -23,7 +23,7 @@ from textwrap import dedent
 from pdg_codes import PDG_CODES
 
 __author__ = "Roberto Vidal"
-__copyright__ = "(c) 2014 by José Roberto Vidal"
+__copyright__ = "(c) 2014 by Jose Roberto Vidal"
 __version__ = "0.0.2"
 __license__ = "GPL"
 

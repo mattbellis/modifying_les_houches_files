@@ -1,14 +1,14 @@
-import numpy as np
 import pylhef
 import sys
+import math 
 
 def invmass(e,px,py,pz):
 
     m2 = e*e - (px*px + py*py + pz*pz)
     if m2>=0:
-        return np.sqrt(m2)
+        return math.sqrt(m2)
     else:
-        return -np.sqrt(-m2)
+        return -math.sqrt(-m2)
 
 
 def get_header(infilename):
