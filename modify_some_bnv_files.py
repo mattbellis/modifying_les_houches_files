@@ -26,6 +26,8 @@ decay = sys.argv[2]
 #decay = 'tbar2edu'
 
 top = 6
+W = 24
+bfromtop = 5
 lep = -13
 qdown = -5
 qup = -4
@@ -49,6 +51,8 @@ if decay.find('bu')>=0 or decay.find('du')>=0:
 
 if decay.find('tbar')>=0:
     top *= -1
+    W *= -1
+    bfromtop *= -1
     lep *= -1
     qup *= -1
     qdown *= -1
@@ -56,15 +60,18 @@ if decay.find('tbar')>=0:
 print("Going to decay {0} --> {1} {2} {3}".format(top,lep,qdown,qup))
 #exit()
 
+# GET ALL THE REWEIGHTING INFO
 meta = []
 tmpinfile = open(infilename,'r')
 save_line = False
 output = ""
 for line in tmpinfile:
-    if '<mgrwt>' in line:
+    #if '<mgrwt>' in line:
+    if '<scales ' in line:
         output = ""
         save_line = True
-    elif '</mgrwt>' in line:
+    #elif '</mgrwt>' in line:
+    elif '</rwgt>' in line:
         output += line
         save_line = False
         meta.append(output)
@@ -73,11 +80,7 @@ for line in tmpinfile:
     if save_line:
         output += line
 
-
-
-
 rnd = ROOT.TRandom()
-
 
 #outfilename = "bnv_ttbar_t2mubc.lhe"
 #outfilename = "bnv_ttbar_tbar2bjj_t2mubc.lhe"
@@ -94,10 +97,13 @@ print(outfilename)
 #exit()
 
 header = mlt.get_header(infilename)
+print(header)
+
 footer = '</LesHouchesEvents>'
 
 print(header)
 print(footer)
+#exit()
 
 outfile = open(outfilename,"w")
 outfile.write(header)
@@ -122,96 +128,170 @@ for mginfo,event in zip(meta,lhfile.events):
 
     particles = event.particles
 
+    topBNV_index = None
+    WBNV_index = None
+    topSM_index = None
+    WSM_index = None
+    helicities = []
+
+    topSM = None
+    WSM = None
+    bSM = None
+    WchildrenSM = []
+
+    topBNV = None
+    WBNV = None
+    bBNV = None
+    WchildrenBNV = []
+
     for ipart,particle in enumerate(particles):
 
-        #if particle.id != 6:
-        if particle.id != top:
+        # Write out the initial state particles
+        if particle.status == -1:
             output += mlt.write_particle(particle)
             #print(output)
 
-        #elif particle.id == 6: # top quark
+        ####### BNV #######################################
         elif particle.id == top: # top quark
+            topBNV = particle
+            topBNV_index = ipart+1
+            continue
 
-            particle.status = 2 # BECAUSE IT DECAYED IN LHE IS THIS TRUE???
-            child_colors = [0, 0]
-            if particle.color[0]==501:
-                child_colors = [502,503]
-            elif particle.color[0]==502:
-                child_colors = [501,503]
-            elif particle.color[0]==503:
-                child_colors = [501,502]
+        elif particle.id == W and particle.first_mother==topBNV_index: # W boson from the top we want to remove
+            WBNV_index = ipart+1
+            WBNV = particle
+            continue
 
-            output += mlt.write_particle(particle,status=2)
-            #print(output)
+        elif particle.id == bfromtop and particle.first_mother==topBNV_index: # b quark from the top we want to remove
+            helicities.append(particle.spin)
+            bBNV = particle
+            continue
 
-            energy = particle.p[0]
-            px = particle.p[1]
-            py = particle.p[2]
-            pz = particle.p[3]
+        elif particle.first_mother==WBNV_index: # Decay products from W from top, we can remove these
+            helicities.append(particle.spin)
+            WchildrenBNV.append(particle)
+            continue
 
-            # muon, b-quark, and s-quark
-            #print(energy,px,py,pz)
-            #print(mlt.invmass(energy,px,py,pz))
-            #child_masses = np.array([0.105,4.7,1.42])
-            child_masses = np.array([lep_mass, qdown_mass, qup_mass])
-            child_widths = np.array([0,0,0])
+        ######## SM #######################################
+        elif particle.id == -top: # top quark
+            topSM = particle
+            topSM_index = ipart+1
+            continue
 
-            #w = -1
-            #while w<0:
-            w,children = decay_particle([energy,px,py,pz],child_masses,child_widths=child_widths,rnd=rnd)
-            #print(w)
-            #print(children)
+        elif particle.id == -W and particle.first_mother==topSM_index: # W boson from the top we want to remove
+            WSM_index = ipart+1
+            WSM = particle
+            continue
 
-            new_children = []
+        elif particle.id == -bfromtop and particle.first_mother==topSM_index: # b quark from the top we want to remove
+            bSM = particle
+            continue
 
-            Wmom = None
-            #print(children)
-            for i,child in enumerate(children):
-                raw_particle = []
-                if i==0:
-                    #raw_particle.append(-13) # mu+
-                    raw_particle.append(lep) # 
-                    raw_particle.append(1) # Status
-                elif i==1:
-                    #raw_particle.append(-5) # anti-b
-                    raw_particle.append(qdown) # 
-                    raw_particle.append(1) # Status
-                else:
-                    #raw_particle.append(-4) # anti-charm
-                    raw_particle.append(qup) #
-                    raw_particle.append(1) # Status
+        elif particle.first_mother==WSM_index: # Decay products from W from top, we can remove these
+            WchildrenSM.append(particle)
+            continue
 
-                raw_particle.append(ipart) # First mother
-                raw_particle.append(ipart) # Second mother
-                if i==0: # mu
-                    raw_particle.append(0) # Color 
-                    raw_particle.append(0) # Color 
-                elif i==1: # b
-                    raw_particle.append(0) # Color # NOT CORRECT RIGHT NOW
-                    raw_particle.append(child_colors[0]) # Color # MAYBE CORRECT RIGHT NOW
-                else: # s
-                    raw_particle.append(0) # Color # NOT CORRECT RIGHT NOW
-                    raw_particle.append(child_colors[1]) # Color # MAYBE CORRECT RIGHT NOW
+    ############################################################################
+    #### Write out the other particles
+    ############################################################################
+    output += mlt.write_particle(topSM) # 3
+    output += mlt.write_particle(topBNV) # 4
+    output += mlt.write_particle(WSM,parent_index=3) # 5
+    output += mlt.write_particle(bSM,parent_index=3) # 6
+    output += mlt.write_particle(WchildrenSM[0],parent_index=5) # 7
+    output += mlt.write_particle(WchildrenSM[1],parent_index=5) # 8
 
-                raw_particle.append(child[1]) # 
-                raw_particle.append(child[2]) # 
-                raw_particle.append(child[3]) # 
-                raw_particle.append(child[0]) # 
-                raw_particle.append(mlt.invmass(child[0],child[1],child[2],child[3])) # 
-                raw_particle.append(0.0) # Lifetime
-                raw_particle.append(-1) # SpinUp # NOT CORRECT RIGHT NOW LOOK AT PYLHEF
+    # Decay the top to the BNV children
+    particle = topBNV
+    #particle.status = 2 # BECAUSE IT DECAYED IN LHE
+    child_colors = [0, 0]
+    if particle.color[0]==501:
+        child_colors = [502,503]
+    elif particle.color[0]==502:
+        child_colors = [501,503]
+    elif particle.color[0]==503:
+        child_colors = [501,502]
+    elif particle.color[0]==504:
+        child_colors = [502,503]
+    elif particle.color[0]==505:
+        child_colors = [503,504]
+    else:
+        child_colors = [504,505]
 
-                p = pylhef.Particle(raw_particle)
-                #print(raw_particle)
-                #print(p.status)
+    #output += mlt.write_particle(particle,status=2)
+    #print(output)
 
-                new_children.append([p,ipart+1])
+    energy = particle.p[0]
+    px = particle.p[1]
+    py = particle.p[2]
+    pz = particle.p[3]
 
-            for nc in new_children:
-                p = nc[0]
-                ipart = nc[1]
-                output += mlt.write_particle(p,parent_index=ipart)
-                #print(output)
+    # muon, b-quark, and s-quark
+    #print(energy,px,py,pz)
+    #print(mlt.invmass(energy,px,py,pz))
+    #child_masses = np.array([0.105,4.7,1.42])
+    child_masses = np.array([lep_mass, qdown_mass, qup_mass])
+    child_widths = np.array([0,0,0])
+
+    #w = -1
+    #while w<0:
+    w,children = decay_particle([energy,px,py,pz],child_masses,child_widths=child_widths,rnd=rnd)
+    #print(w)
+    #print(children)
+
+    new_children = []
+
+    #print(children)
+    for i,child in enumerate(children):
+        raw_particle = []
+        if i==0:
+            #raw_particle.append(-13) # mu+
+            raw_particle.append(lep) # 
+            raw_particle.append(1) # Status
+        elif i==1:
+            #raw_particle.append(-5) # anti-b
+            raw_particle.append(qdown) # 
+            raw_particle.append(1) # Status
+        else:
+            #raw_particle.append(-4) # anti-charm
+            raw_particle.append(qup) #
+            raw_particle.append(1) # Status
+
+        raw_particle.append(ipart) # First mother
+        raw_particle.append(ipart) # Second mother
+        if i==0: # mu
+            raw_particle.append(0) # Color 
+            raw_particle.append(0) # Color 
+        elif i==1: # b
+            raw_particle.append(0) # Color # NOT CORRECT RIGHT NOW
+            raw_particle.append(child_colors[0]) # Color # MAYBE CORRECT RIGHT NOW
+        else: # s
+            raw_particle.append(0) # Color # NOT CORRECT RIGHT NOW
+            raw_particle.append(child_colors[1]) # Color # MAYBE CORRECT RIGHT NOW
+
+        raw_particle.append(child[1]) # 
+        raw_particle.append(child[2]) # 
+        raw_particle.append(child[3]) # 
+        raw_particle.append(child[0]) # 
+        raw_particle.append(mlt.invmass(child[0],child[1],child[2],child[3])) # 
+        raw_particle.append(0.0) # Lifetime
+        raw_particle.append(helicities[i]) # Helicities
+
+        p = pylhef.Particle(raw_particle)
+        output += mlt.write_particle(p,parent_index=4)
+        #print(raw_particle)
+        #print(p.status)
+
+        #new_children.append([p,ipart+1])
+
+    '''
+    for nc in new_children:
+        p = nc[0]
+        ipart = nc[1]
+        output += mlt.write_particle(p,parent_index=ipart)
+        #print(output)
+    '''
+    #print(helicities)
 
     output += mginfo
     output += "</event>\n"
